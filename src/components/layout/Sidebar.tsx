@@ -34,7 +34,13 @@ export default function Sidebar() {
     >
       {/* Sidebar Header */}
       <div className="flex items-center justify-between p-4 border-b border-slate-700">
-        {!collapsed && <h1 className="text-lg font-bold">EV Admin</h1>}
+        {!collapsed ? (
+          <img 
+            src="/logo.png" 
+            alt="EV Admin Logo"
+            className="h-8"
+          />
+        ) : null}
         <Button
           variant="ghost"
           size="icon"
