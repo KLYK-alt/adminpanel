@@ -219,9 +219,9 @@ export default function TrainingsPage() {
                       <span className="ml-2">{training.location}</span>
                     </div>
                   )}
-                  {training.registration_link && (
+                  {training.link && (
                     <a
-                      href={training.registration_link}
+                      href={training.link}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-sm text-blue-600 hover:underline"

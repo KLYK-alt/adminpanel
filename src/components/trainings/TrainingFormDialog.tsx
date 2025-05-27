@@ -43,7 +43,7 @@ export default function TrainingFormDialog({
           location: training.location || '',
           mode: training.mode,
           image_url: training.image_url || '',
-          registration_link: training.registration_link || ''
+          link: training.link || ''
         }
       : { 
           title: '',
@@ -53,7 +53,7 @@ export default function TrainingFormDialog({
           location: '',
           mode: 'Online',
           image_url: '',
-          registration_link: ''
+          link: ''
         }
   });
 
@@ -68,7 +68,7 @@ export default function TrainingFormDialog({
             location: training.location || '',
             mode: training.mode,
             image_url: training.image_url || '',
-            registration_link: training.registration_link || ''
+            link: training.link || ''
           }
         : { 
             title: '',
@@ -78,7 +78,7 @@ export default function TrainingFormDialog({
             location: '',
             mode: 'Online',
             image_url: '',
-            registration_link: ''
+            link: ''
           }
       );
     } else {
@@ -91,7 +91,7 @@ export default function TrainingFormDialog({
         location: '',
         mode: 'Online',
         image_url: '',
-        registration_link: ''
+        link: ''
       });
     }
   }, [open, training, reset]);
@@ -185,20 +185,20 @@ export default function TrainingFormDialog({
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="registration_link">Registration Link</Label>
+              <Label htmlFor="link">Brochure Link</Label>
               <Input
-                id="registration_link"
+                id="link"
                 type="url"
                 placeholder="https://example.com/register"
-                {...register('registration_link', {
+                {...register('link', {
                   pattern: {
                     value: /^https?:\/\/.+/,
                     message: 'Please enter a valid URL starting with http:// or https://'
                   }
                 })}
               />
-              {errors.registration_link && (
-                <p className="text-sm text-red-500">{errors.registration_link.message}</p>
+              {errors.link && (
+                <p className="text-sm text-red-500">{errors.link.message}</p>
               )}
             </div>
 

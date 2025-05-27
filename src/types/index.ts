@@ -74,7 +74,7 @@ export interface NewTraining {
   location?: string;
   mode: 'Online' | 'Offline' | 'Hybrid';
   image_url?: string;
-  registration_link?: string;
+  link?: string;
   created_at: string;
   updated_at: string;
 }
