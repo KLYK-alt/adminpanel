@@ -16,6 +16,10 @@ import TestimonialsPage from "./pages/testimonials/TestimonialsPage";
 import PartnersPage from "./pages/partners/PartnersPage";
 import TrainingsPage from "./pages/trainings/TrainingsPage";
 import ContactsPage from "./pages/Contacts";
+import FAQsPage from "./pages/faqs/FAQsPage";
+import ServicesPage from "./pages/services/ServicesPage";
+import SocialContactsPage from "./pages/social-contacts/SocialContactsPage";
+import MissionVisionPage from "./pages/mission-vision/MissionVisionPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -46,6 +50,10 @@ const App = () => (
             <Route path="partners" element={<PartnersPage />} />
             <Route path="trainings" element={<TrainingsPage />} />
             <Route path="contacts" element={<ContactsPage />} />
+            <Route path="faqs" element={<FAQsPage />} />
+            <Route path="services" element={<ServicesPage />} />
+            <Route path="social-contacts" element={<SocialContactsPage />} />
+            <Route path="mission-vision" element={<MissionVisionPage />} />
           </Route>
           
           {/* Catch all */}

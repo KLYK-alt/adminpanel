@@ -1,5 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-import { BlogPost, TeamMember, Testimonial, Partner, Statistics, NewTraining, Contact } from '@/types';
+import { BlogPost, TeamMember, Testimonial, Partner, Statistics, NewTraining, Contact, FAQ, Service, SocialContact, MissionVision } from '@/types';
 
 // Blog post services
 export const getBlogPosts = async (): Promise<BlogPost[]> => {
@@ -575,6 +575,238 @@ export const deleteContact = async (id: string): Promise<void> => {
 
   if (error) {
     console.error('Error deleting contact:', error);
+    throw error;
+  }
+};
+
+// FAQ services
+export const getFAQs = async (): Promise<FAQ[]> => {
+  const { data, error } = await supabase
+    .from('faqs')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching FAQs:', error);
+    throw error;
+  }
+
+  return data || [];
+};
+
+export const createFAQ = async (faq: Omit<FAQ, 'id' | 'created_at'>): Promise<FAQ> => {
+  const { data, error } = await supabase
+    .from('faqs')
+    .insert(faq)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error creating FAQ:', error);
+    throw error;
+  }
+
+  return data;
+};
+
+export const updateFAQ = async (id: string, faq: Partial<FAQ>): Promise<FAQ> => {
+  const { data, error } = await supabase
+    .from('faqs')
+    .update(faq)
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error updating FAQ:', error);
+    throw error;
+  }
+
+  return data;
+};
+
+export const deleteFAQ = async (id: string): Promise<void> => {
+  const { error } = await supabase
+    .from('faqs')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error deleting FAQ:', error);
+    throw error;
+  }
+};
+
+// Service services
+export const getServices = async (): Promise<Service[]> => {
+  const { data, error } = await supabase
+    .from('services')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching services:', error);
+    throw error;
+  }
+
+  return data || [];
+};
+
+export const createService = async (service: Omit<Service, 'id' | 'created_at'>): Promise<Service> => {
+  const { data, error } = await supabase
+    .from('services')
+    .insert(service)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error creating service:', error);
+    throw error;
+  }
+
+  return data;
+};
+
+export const updateService = async (id: string, service: Partial<Service>): Promise<Service> => {
+  const { data, error } = await supabase
+    .from('services')
+    .update(service)
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error updating service:', error);
+    throw error;
+  }
+
+  return data;
+};
+
+export const deleteService = async (id: string): Promise<void> => {
+  const { error } = await supabase
+    .from('services')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error deleting service:', error);
+    throw error;
+  }
+};
+
+// Social Contact services
+export const getSocialContacts = async (): Promise<SocialContact[]> => {
+  const { data, error } = await supabase
+    .from('social_contacts')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching social contacts:', error);
+    throw error;
+  }
+
+  return data || [];
+};
+
+export const createSocialContact = async (contact: Omit<SocialContact, 'id' | 'created_at'>): Promise<SocialContact> => {
+  const { data, error } = await supabase
+    .from('social_contacts')
+    .insert(contact)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error creating social contact:', error);
+    throw error;
+  }
+
+  return data;
+};
+
+export const updateSocialContact = async (id: string, contact: Partial<SocialContact>): Promise<SocialContact> => {
+  const { data, error } = await supabase
+    .from('social_contacts')
+    .update(contact)
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error updating social contact:', error);
+    throw error;
+  }
+
+  return data;
+};
+
+export const deleteSocialContact = async (id: string): Promise<void> => {
+  const { error } = await supabase
+    .from('social_contacts')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error deleting social contact:', error);
+    throw error;
+  }
+};
+
+// Mission & Vision services
+export const getMissionVision = async (): Promise<MissionVision[]> => {
+  const { data, error } = await supabase
+    .from('mission_vision')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching mission & vision:', error);
+    throw error;
+  }
+
+  return data || [];
+};
+
+export const createMissionVision = async (item: Omit<MissionVision, 'id' | 'created_at'>): Promise<MissionVision> => {
+  const { data, error } = await supabase
+    .from('mission_vision')
+    .insert(item)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error creating mission & vision:', error);
+    throw error;
+  }
+
+  return data;
+};
+
+export const updateMissionVision = async (id: string, item: Partial<MissionVision>): Promise<MissionVision> => {
+  const { data, error } = await supabase
+    .from('mission_vision')
+    .update(item)
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error updating mission & vision:', error);
+    throw error;
+  }
+
+  return data;
+};
+
+export const deleteMissionVision = async (id: string): Promise<void> => {
+  const { error } = await supabase
+    .from('mission_vision')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error deleting mission & vision:', error);
     throw error;
   }
 };

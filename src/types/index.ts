@@ -90,3 +90,40 @@ export interface Contact {
   created_at: string;
   updated_at: string;
 }
+
+// FAQ type
+export interface FAQ {
+  id: string;
+  question: string;
+  answer: string;
+  created_at: string;
+}
+
+// Service type
+export interface Service {
+  id: string;
+  title: string;
+  short_description: string;
+  bullet_points: string[];
+  image_url?: string;
+  keywords: string[];
+  created_at: string;
+}
+
+// Social Contact type
+export interface SocialContact {
+  id: string;
+  platform: string;
+  handle_or_url: string;
+  contact_type?: string;
+  value?: string;
+  created_at: string;
+}
+
+// Mission & Vision type
+export interface MissionVision {
+  id: string;
+  type: 'mission' | 'vision';
+  content: string;
+  created_at: string;
+}

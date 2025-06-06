@@ -1,6 +1,20 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, LayoutDashboard, Users, Star, Building, BookOpen, Calendar, MessageSquare } from 'lucide-react';
+import { 
+  ChevronLeft, 
+  ChevronRight, 
+  LayoutDashboard, 
+  Users, 
+  Star, 
+  Building, 
+  BookOpen, 
+  Calendar, 
+  MessageSquare,
+  HelpCircle,
+  Briefcase,
+  Share2,
+  Target
+} from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -14,6 +28,10 @@ const navItems = [
   { name: 'Partners', path: '/partners', icon: Building },
   { name: 'Training Updates', path: '/trainings', icon: Calendar },
   { name: 'User Contacts', path: '/contacts', icon: MessageSquare },
+  { name: 'FAQs', path: '/faqs', icon: HelpCircle },
+  { name: 'Services', path: '/services', icon: Briefcase },
+  { name: 'Social Contacts', path: '/social-contacts', icon: Share2 },
+  { name: 'Mission & Vision', path: '/mission-vision', icon: Target },
 ];
 
 export default function Sidebar() {
