@@ -34,7 +34,7 @@ export default function MissionVisionPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<MissionVision | null>(null);
   const [formData, setFormData] = useState({
-    type: 'mission' as 'mission' | 'vision',
+    type: 'mission' as 'mission' | 'vision' | 'story',
     title: '',
     content: '',
   });
@@ -98,13 +98,18 @@ export default function MissionVisionPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const data = {
+      ...formData,
+      title: formData.type === 'story' ? null : formData.title,
+    };
+    
     if (editingItem) {
       updateMutation.mutate({
         id: editingItem.id,
-        data: formData,
+        data,
       });
     } else {
-      createMutation.mutate(formData);
+      createMutation.mutate(data);
     }
   };
 
@@ -112,7 +117,7 @@ export default function MissionVisionPage() {
     setEditingItem(item);
     setFormData({
       type: item.type,
-      title: item.title,
+      title: item.title || '',
       content: item.content,
     });
     setIsDialogOpen(true);
@@ -130,11 +135,12 @@ export default function MissionVisionPage() {
 
   const missions = items?.filter(item => item.type === 'mission') || [];
   const visions = items?.filter(item => item.type === 'vision') || [];
+  const stories = items?.filter(item => item.type === 'story') || [];
 
   return (
     <div className="container mx-auto py-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Mission & Vision Management</h1>
+        <h1 className="text-2xl font-bold">Mission, Vision & Stories</h1>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button onClick={() => resetForm()}>
@@ -153,7 +159,7 @@ export default function MissionVisionPage() {
                 <label className="text-sm font-medium">Type</label>
                 <Select
                   value={formData.type}
-                  onValueChange={(value: 'mission' | 'vision') =>
+                  onValueChange={(value: 'mission' | 'vision' | 'story') =>
                     setFormData({ ...formData, type: value })
                   }
                 >
@@ -163,20 +169,23 @@ export default function MissionVisionPage() {
                   <SelectContent>
                     <SelectItem value="mission">Mission</SelectItem>
                     <SelectItem value="vision">Vision</SelectItem>
+                    <SelectItem value="story">Story</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <div>
-                <label className="text-sm font-medium">Title</label>
-                <Input
-                  value={formData.title}
-                  onChange={(e) =>
-                    setFormData({ ...formData, title: e.target.value })
-                  }
-                  placeholder={`Enter ${formData.type} title`}
-                  required
-                />
-              </div>
+              {formData.type !== 'story' && (
+                <div>
+                  <label className="text-sm font-medium">Title</label>
+                  <Input
+                    value={formData.title}
+                    onChange={(e) =>
+                      setFormData({ ...formData, title: e.target.value })
+                    }
+                    placeholder={`Enter ${formData.type} title`}
+                    required
+                  />
+                </div>
+              )}
               <div>
                 <label className="text-sm font-medium">Content</label>
                 <Textarea
@@ -283,6 +292,50 @@ export default function MissionVisionPage() {
                 <TableRow>
                   <TableCell colSpan={3} className="text-center text-gray-500">
                     No vision statements added yet
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+
+        <div className="bg-white p-6 rounded-lg shadow">
+          <h2 className="text-xl font-semibold mb-4">Stories</h2>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Content</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {stories.map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell className="whitespace-pre-wrap">{item.content}</TableCell>
+                  <TableCell>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleEdit(item)}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDelete(item.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+              {stories.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={2} className="text-center text-gray-500">
+                    No stories added yet
                   </TableCell>
                 </TableRow>
               )}

@@ -713,7 +713,12 @@ export const getSocialContacts = async (): Promise<SocialContact[]> => {
 export const createSocialContact = async (contact: Omit<SocialContact, 'id' | 'created_at'>): Promise<SocialContact> => {
   const { data, error } = await supabase
     .from('social_contacts')
-    .insert(contact)
+    .insert({
+      type: contact.type,
+      platform: contact.type === 'social' ? contact.platform : null,
+      handle_or_url: contact.type === 'social' ? contact.handle_or_url : null,
+      value: contact.value,
+    })
     .select()
     .single();
 
@@ -728,7 +733,12 @@ export const createSocialContact = async (contact: Omit<SocialContact, 'id' | 'c
 export const updateSocialContact = async (id: string, contact: Partial<SocialContact>): Promise<SocialContact> => {
   const { data, error } = await supabase
     .from('social_contacts')
-    .update(contact)
+    .update({
+      type: contact.type,
+      platform: contact.type === 'social' ? contact.platform : null,
+      handle_or_url: contact.type === 'social' ? contact.handle_or_url : null,
+      value: contact.value,
+    })
     .eq('id', id)
     .select()
     .single();
@@ -771,7 +781,11 @@ export const getMissionVision = async (): Promise<MissionVision[]> => {
 export const createMissionVision = async (item: Omit<MissionVision, 'id' | 'created_at'>): Promise<MissionVision> => {
   const { data, error } = await supabase
     .from('mission_vision')
-    .insert(item)
+    .insert({
+      type: item.type,
+      title: item.type === 'story' ? null : item.title,
+      content: item.content,
+    })
     .select()
     .single();
 
@@ -786,7 +800,11 @@ export const createMissionVision = async (item: Omit<MissionVision, 'id' | 'crea
 export const updateMissionVision = async (id: string, item: Partial<MissionVision>): Promise<MissionVision> => {
   const { data, error } = await supabase
     .from('mission_vision')
-    .update(item)
+    .update({
+      type: item.type,
+      title: item.type === 'story' ? null : item.title,
+      content: item.content,
+    })
     .eq('id', id)
     .select()
     .single();

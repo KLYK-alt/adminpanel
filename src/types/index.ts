@@ -113,17 +113,18 @@ export interface Service {
 // Social Contact type
 export interface SocialContact {
   id: string;
-  platform: string;
-  handle_or_url: string;
-  contact_type?: string;
-  value?: string;
+  type: 'social' | 'email' | 'phone' | 'location';
+  platform?: 'LinkedIn' | 'X' | 'Facebook' | 'YouTube' | 'Instagram';
+  handle_or_url?: string;
+  value: string;
   created_at: string;
 }
 
 // Mission & Vision type
 export interface MissionVision {
   id: string;
-  type: 'mission' | 'vision';
+  type: 'mission' | 'vision' | 'story';
+  title: string | null;
   content: string;
   created_at: string;
 }

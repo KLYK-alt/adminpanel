@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Pencil, Trash2, Search, Filter } from 'lucide-react';
 import { toast } from 'sonner';
@@ -39,7 +39,7 @@ export default function SocialContactsPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingContact, setEditingContact] = useState<SocialContact | null>(null);
   const [formData, setFormData] = useState({
-    type: 'social' as 'social' | 'email' | 'phone',
+    type: 'social' as 'social' | 'email' | 'phone' | 'location',
     platform: '' as 'LinkedIn' | 'X' | 'Facebook' | 'YouTube' | 'Instagram' | '',
     handle_or_url: '',
     value: '',
@@ -81,12 +81,12 @@ export default function SocialContactsPage() {
     mutationFn: createSocialContact,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['social-contacts'] });
-      toast.success('Social contact created successfully');
+      toast.success('Contact created successfully');
       setIsDialogOpen(false);
       resetForm();
     },
     onError: (error) => {
-      toast.error('Failed to create social contact');
+      toast.error('Failed to create contact');
       console.error(error);
     },
   });
@@ -96,12 +96,12 @@ export default function SocialContactsPage() {
       updateSocialContact(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['social-contacts'] });
-      toast.success('Social contact updated successfully');
+      toast.success('Contact updated successfully');
       setIsDialogOpen(false);
       resetForm();
     },
     onError: (error) => {
-      toast.error('Failed to update social contact');
+      toast.error('Failed to update contact');
       console.error(error);
     },
   });
@@ -110,10 +110,10 @@ export default function SocialContactsPage() {
     mutationFn: deleteSocialContact,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['social-contacts'] });
-      toast.success('Social contact deleted successfully');
+      toast.success('Contact deleted successfully');
     },
     onError: (error) => {
-      toast.error('Failed to delete social contact');
+      toast.error('Failed to delete contact');
       console.error(error);
     },
   });
@@ -137,8 +137,17 @@ export default function SocialContactsPage() {
         return false;
       }
     }
-    if (formData.type === 'social' && !formData.platform) {
-      toast.error('Please select a platform for social media contact');
+    if (formData.type === 'social') {
+      if (!formData.platform) {
+        toast.error('Please select a platform for social media contact');
+        return false;
+      }
+      if (!formData.handle_or_url) {
+        toast.error('Please enter a handle or URL for social media contact');
+        return false;
+      }
+    } else if (!formData.value) {
+      toast.error('Please enter a value for the contact');
       return false;
     }
     return true;
@@ -156,9 +165,15 @@ export default function SocialContactsPage() {
       dataToSubmit.value = `+91${phoneNumber}`;
     }
 
-    // Clear platform for non-social types
+    // For social type, use handle_or_url as the value
+    if (formData.type === 'social') {
+      dataToSubmit.value = formData.handle_or_url;
+    }
+
+    // Clear platform and handle_or_url for non-social types
     if (formData.type !== 'social') {
       dataToSubmit.platform = null;
+      dataToSubmit.handle_or_url = null;
     }
 
     if (editingContact) {
@@ -177,13 +192,13 @@ export default function SocialContactsPage() {
       type: contact.type,
       platform: contact.platform || '',
       handle_or_url: contact.handle_or_url || '',
-      value: contact.value || '',
+      value: contact.value,
     });
     setIsDialogOpen(true);
   };
 
   const handleDelete = (id: string) => {
-    if (window.confirm('Are you sure you want to delete this social contact?')) {
+    if (window.confirm('Are you sure you want to delete this contact?')) {
       deleteMutation.mutate(id);
     }
   };
@@ -201,7 +216,7 @@ export default function SocialContactsPage() {
   return (
     <div className="container mx-auto py-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Social Contacts Management</h1>
+        <h1 className="text-2xl font-bold">Contact Management</h1>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button onClick={() => resetForm()}>
@@ -220,7 +235,7 @@ export default function SocialContactsPage() {
                 <label className="text-sm font-medium">Contact Type</label>
                 <Select
                   value={formData.type}
-                  onValueChange={(value: 'social' | 'email' | 'phone') =>
+                  onValueChange={(value: 'social' | 'email' | 'phone' | 'location') =>
                     setFormData({ ...formData, type: value, platform: value === 'social' ? formData.platform : '' })
                   }
                 >
@@ -231,62 +246,73 @@ export default function SocialContactsPage() {
                     <SelectItem value="social">Social Media</SelectItem>
                     <SelectItem value="email">Email</SelectItem>
                     <SelectItem value="phone">Phone</SelectItem>
+                    <SelectItem value="location">Location</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               {formData.type === 'social' && (
-                <div>
-                  <label className="text-sm font-medium">Platform</label>
-                  <Select
-                    value={formData.platform}
-                    onValueChange={(value: 'LinkedIn' | 'X' | 'Facebook' | 'YouTube' | 'Instagram') =>
-                      setFormData({ ...formData, platform: value })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select platform" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="LinkedIn">LinkedIn</SelectItem>
-                      <SelectItem value="X">X (Twitter)</SelectItem>
-                      <SelectItem value="Facebook">Facebook</SelectItem>
-                      <SelectItem value="YouTube">YouTube</SelectItem>
-                      <SelectItem value="Instagram">Instagram</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                <>
+                  <div>
+                    <label className="text-sm font-medium">Platform</label>
+                    <Select
+                      value={formData.platform}
+                      onValueChange={(value: 'LinkedIn' | 'X' | 'Facebook' | 'YouTube' | 'Instagram') =>
+                        setFormData({ ...formData, platform: value })
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select platform" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="LinkedIn">LinkedIn</SelectItem>
+                        <SelectItem value="X">X (Twitter)</SelectItem>
+                        <SelectItem value="Facebook">Facebook</SelectItem>
+                        <SelectItem value="YouTube">YouTube</SelectItem>
+                        <SelectItem value="Instagram">Instagram</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium">Handle or URL</label>
+                    <Input
+                      value={formData.handle_or_url}
+                      onChange={(e) =>
+                        setFormData({ ...formData, handle_or_url: e.target.value })
+                      }
+                      placeholder="e.g., @username or https://..."
+                      required
+                    />
+                  </div>
+                </>
               )}
 
-              {formData.type === 'social' && (
-                <div>
-                  <label className="text-sm font-medium">Handle or URL</label>
-                  <Input
-                    value={formData.handle_or_url}
-                    onChange={(e) =>
-                      setFormData({ ...formData, handle_or_url: e.target.value })
-                    }
-                    placeholder="e.g., @username or https://..."
-                    required
-                  />
-                </div>
-              )}
-
-              {(formData.type === 'email' || formData.type === 'phone') && (
+              {formData.type !== 'social' && (
                 <div>
                   <label className="text-sm font-medium">
-                    {formData.type === 'email' ? 'Email Address' : 'Phone Number'}
+                    {formData.type === 'email' 
+                      ? 'Email Address' 
+                      : formData.type === 'phone'
+                      ? 'Phone Number'
+                      : formData.type === 'location'
+                      ? 'Location'
+                      : 'Value'}
                   </label>
                   <Input
                     value={formData.value}
                     onChange={(e) =>
                       setFormData({ ...formData, value: e.target.value })
                     }
-                    type={formData.type === 'email' ? 'email' : 'tel'}
+                    type={formData.type === 'email' ? 'email' : 'text'}
                     placeholder={
                       formData.type === 'email'
                         ? 'Enter email address'
-                        : 'Enter 10-digit phone number (will be prefixed with +91)'
+                        : formData.type === 'phone'
+                        ? 'Enter 10-digit phone number (will be prefixed with +91)'
+                        : formData.type === 'location'
+                        ? 'Enter location (e.g., city, address)'
+                        : 'Enter value'
                     }
                     required
                   />
@@ -363,6 +389,18 @@ export default function SocialContactsPage() {
                 }}
               >
                 Phone
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                checked={typeFilter.includes('location')}
+                onCheckedChange={(checked) => {
+                  setTypeFilter(prev =>
+                    checked
+                      ? [...prev, 'location']
+                      : prev.filter(t => t !== 'location')
+                  );
+                }}
+              >
+                Location
               </DropdownMenuCheckboxItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -444,8 +482,17 @@ export default function SocialContactsPage() {
                   >
                     {contact.value}
                   </a>
+                ) : contact.type === 'location' ? (
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(contact.value)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 hover:underline"
+                  >
+                    {contact.value}
+                  </a>
                 ) : (
-                  '-'
+                  contact.value
                 )}
               </TableCell>
               <TableCell>
@@ -472,7 +519,7 @@ export default function SocialContactsPage() {
             <TableRow>
               <TableCell colSpan={4} className="text-center text-gray-500">
                 {contacts?.length === 0
-                  ? 'No social contacts added yet'
+                  ? 'No contacts added yet'
                   : 'No contacts match your filters'}
               </TableCell>
             </TableRow>
